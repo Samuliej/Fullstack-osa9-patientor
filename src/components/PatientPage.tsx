@@ -1,7 +1,9 @@
 import { useParams } from "react-router-dom";
-import { Patient } from "../types";
+import { Patient, Diagnosis } from "../types";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
+import { useState, useEffect } from 'react';
+import diagnoseService from '../services/diagnoses';
 
 
 interface PatientProps {
@@ -11,6 +13,16 @@ interface PatientProps {
 const PatientPage = (props: PatientProps) => {
   const id = useParams().id;
   const patient = props.patients.find(p => p.id === id);
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([])
+
+  useEffect(() => {
+    const fetchDiagnoseList = async () => {
+      const patients = await diagnoseService.getAll();
+      setDiagnoses(patients);
+    };
+    void fetchDiagnoseList();
+  }, [diagnoses])
+
   return (
     <div>
       <h2>
@@ -26,7 +38,11 @@ const PatientPage = (props: PatientProps) => {
           <div key={entry.id}>
            <p key={entry.id}>{entry.date} {entry.description}</p>
            <ul>
-            {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
+            {entry.diagnosisCodes?.map(code =>
+              <li key={code}>{code} {diagnoses.map(diagnose => diagnose.code === code
+              ? diagnose.name : null)}
+              </li>
+            )}
            </ul>
           </div>
       )})}
