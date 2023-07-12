@@ -25,6 +25,8 @@ const NewHospitalEntry = (props: NewHospitalEntryProps) => {
   const [dischargeDate, setDischargeDate] = useState<string>('');
   const [criteria, setCriteria] = useState<string>('');
 
+  const currentDate = new Date().toISOString().split('T')[0];
+
   const formStyle = {
     border: 'black',
     borderStyle: 'solid',
@@ -85,19 +87,43 @@ const NewHospitalEntry = (props: NewHospitalEntryProps) => {
       <h3>New Hospital entry</h3>
       <TextField id='description-input' value={description} onChange={({ target }) => setDescription(target.value)}
                 style={formWidth} label="Description" variant="standard" />
-      <TextField value={date} onChange={({ target }) => setDate(target.value)}
-                style={formWidth} id="date-input" label="Date" variant="standard" />
       <TextField value={specialist} onChange={({ target }) => setSpecialist(target.value)}
                 style={formWidth} id="specialist-input" label="Specialist" variant="standard" />
-      <TextField value={dischargeDate} onChange={({ target }) => setDischargeDate(target.value)}
-                style={{...formWidth, marginBottom: '10px'}} id="discharge-date-input" label="Discharge date" variant="standard" />
       <TextField value={criteria} onChange={({ target }) => setCriteria(target.value)}
                 style={{...formWidth, marginBottom: '10px'}} id="criteria-input" label="Criteria" variant="standard" />
-      <DiagnosisSelector
-        diagnosis={props.diagnosis}
-        diagnosisCodes={props.diagnosisCodes}
-        handleChange={props.handleChange}
-      />
+
+      <div>
+        <TextField
+          style={{ marginLeft: '10px', marginTop: '23px', minWidth: '300px' }}
+          id="date-input"
+          label="Date of entry"
+          type="date"
+          defaultValue={currentDate}
+          onChange={({ target }) => setDate(target.value)}
+          InputLabelProps={{
+          shrink: true,
+          }}
+        />
+        <TextField
+          style={{ marginLeft: '10px', marginTop: '23px', minWidth: '300px' }}
+          id="discharge-date-input"
+          label="Discharge date"
+          type="date"
+          defaultValue={currentDate}
+          onChange={({ target }) => setDischargeDate(target.value)}
+          InputLabelProps={{
+          shrink: true,
+          }}
+        />
+      </div>
+
+      <div style={{ marginLeft: '10px' }}>
+        <DiagnosisSelector
+          diagnosis={props.diagnosis}
+          diagnosisCodes={props.diagnosisCodes}
+          handleChange={props.handleChange}
+        />
+      </div>
       <Button color='success'  type='submit' style={{ minWidth: '1px', display: 'inline-block', float: 'right' }} variant='contained' >add</Button>
     </form>
   )

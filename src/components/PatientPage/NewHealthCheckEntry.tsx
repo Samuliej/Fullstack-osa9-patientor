@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { TextField, InputLabel, Button, SelectChangeEvent } from "@mui/material";
+import { TextField, Button, SelectChangeEvent, Select, InputLabel, MenuItem } from "@mui/material";
 import DiagnosisSelector from "./DiagnosisSelector";
-import { Patient, Diagnosis } from '../../types';
+import { Patient, Diagnosis, HealthCheckRating } from '../../types';
 import patientService from '../../services/patients';
 import { isAxiosError } from 'axios';
 
@@ -23,6 +23,8 @@ const NewHealthCheckEntry = (props: NewHealthCheckEntryProps) => {
   const [date, setDate] = useState<string>('');
   const [specialist, setSpecialist] = useState<string>('');
   const [healthCheckRating, setHealthCheckRating] = useState<number>(0);
+
+  const currentDate = new Date().toISOString().split('T')[0];
 
   const formStyle = {
     border: 'black',
@@ -80,18 +82,42 @@ const NewHealthCheckEntry = (props: NewHealthCheckEntryProps) => {
       <h3>New HealthCheck entry</h3>
       <TextField id='description-input' value={description} onChange={({ target }) => setDescription(target.value)}
                 style={formWidth} label="Description" variant="standard" />
-      <TextField value={date} onChange={({ target }) => setDate(target.value)}
-                style={formWidth} id="date-input" label="Date" variant="standard" />
       <TextField value={specialist} onChange={({ target }) => setSpecialist(target.value)}
                 style={formWidth} id="specialist-input" label="Specialist" variant="standard" />
-      <TextField value={healthCheckRating} onChange={({ target }) => setHealthCheckRating(Number(target.value))}
-                style={formWidth} id="healthcheck-input" label="Healthcheck rating" variant="standard" />
-      <InputLabel id="demo-multiple-checkbox-label">Diagnosis codes</InputLabel>
-      <DiagnosisSelector
-        diagnosis={props.diagnosis}
-        diagnosisCodes={props.diagnosisCodes}
-        handleChange={props.handleChange}
-      />
+      <InputLabel id="healthcheck-label">Healthcheck rating</InputLabel>
+      <Select
+        labelId="healthcheck-label"
+        id="healthcheck-input"
+        value={healthCheckRating}
+        onChange={(event) => setHealthCheckRating(event.target.value as number)}
+        style={formWidth}
+      >
+      {Object.values(HealthCheckRating)
+        .filter((value) => typeof value === 'number')
+        .map((rating) => (
+          <MenuItem key={rating} value={rating}>
+            {rating}
+          </MenuItem>
+      ))}
+      </Select>
+      <div>
+        <DiagnosisSelector
+          diagnosis={props.diagnosis}
+          diagnosisCodes={props.diagnosisCodes}
+          handleChange={props.handleChange}
+        />
+        <TextField
+          style={{ marginLeft: '10px', marginTop: '23px', minWidth: '300px' }}
+          id="date-input"
+          label="Date of entry"
+          type="date"
+          defaultValue={currentDate}
+          onChange={({ target }) => setDate(target.value)}
+          InputLabelProps={{
+          shrink: true,
+          }}
+        />
+      </div>
       <Button color='success'  type='submit' style={{ minWidth: '1px', display: 'inline-block', float: 'right' }} variant='contained' >add</Button>
     </form>
   )

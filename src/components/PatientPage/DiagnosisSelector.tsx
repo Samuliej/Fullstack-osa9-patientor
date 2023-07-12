@@ -1,4 +1,4 @@
-import { Select, OutlinedInput, MenuItem, Checkbox, ListItemText, SelectChangeEvent } from "@mui/material";
+import { Select, OutlinedInput, MenuItem, Checkbox, ListItemText, SelectChangeEvent, InputLabel } from "@mui/material";
 import { Diagnosis } from "../../types";
 
 interface DiagnosisSelectorProps {
@@ -20,9 +20,10 @@ const DiagnosisSelector = (props: DiagnosisSelectorProps) => {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: '300px', display: 'inline-block' }}>
+      <InputLabel id="diagnosis-code-label">Diagnosis codes</InputLabel>
       <Select
-        style={{ minWidth: '300px' }}
+        style={{ minWidth: '300px',maxWidth: '300px', overflow: 'hidden'}}
         labelId="demo-multiple-checkbox-label"
         id="demo-multiple-checkbox"
         multiple
