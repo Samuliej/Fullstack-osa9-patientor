@@ -162,7 +162,7 @@ const PatientPage = (props: PatientProps) => {
       <p>occupation: {patient?.occupation}</p>
 
       <div style={{ marginBottom: '10px' }}>
-        {patient && <NewEntryForm patient={patient} onEntryAdded={handleEntryAdded}/>}
+        {patient && <NewEntryForm diagnosis={diagnoses} patient={patient} onEntryAdded={handleEntryAdded}/>}
       </div>
 
       <h3>entries</h3>
