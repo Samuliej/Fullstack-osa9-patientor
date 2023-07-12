@@ -88,6 +88,10 @@ const OccupationalEntryView = (props: OccupationalProps) => {
       {props.details.diagnosisCodes &&
         <DiagnosisList diagnosisCodes={props.details.diagnosisCodes} diagnoses={props.diagnoses} />
       }
+      {props.details.sickLeave &&
+        <p>Sick Leave from: {props.details.sickLeave?.startDate} to: {props.details.sickLeave?.endDate}</p>
+      }
+
       <p>diagnose by: <strong>{props.details.specialist}</strong></p>
     </div>
   )
