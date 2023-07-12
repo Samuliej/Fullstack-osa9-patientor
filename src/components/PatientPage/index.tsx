@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
-import { Patient, Diagnosis , Entry, HospitalEntry, OccupationalHealthcareEntry, HealthCheckEntry } from "../types";
+import { Patient, Diagnosis , Entry, HospitalEntry, OccupationalHealthcareEntry, HealthCheckEntry } from "../../types";
 import MaleIcon from '@mui/icons-material/Male';
 import FemaleIcon from '@mui/icons-material/Female';
 import { useState, useEffect } from 'react';
-import diagnoseService from '../services/diagnoses';
+import diagnoseService from '../../services/diagnoses';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import WorkIcon from '@mui/icons-material/Work';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
-import { Button } from "@mui/material";
+import NewEntryForm from "./NewEntryForm";
 
 const entryStyle = {
   border: '2px',
@@ -42,15 +42,22 @@ interface DiagnosisProps {
   diagnoses: Diagnosis[];
 }
 
+
 const DiagnosisList = (props: DiagnosisProps) => {
+  if (props.diagnosisCodes.length === 0 || props.diagnosisCodes[0] === '') {
+    return null;
+  }
+
   return (
-    <ul>
-    {props.diagnosisCodes?.map(code =>
-          <li key={code}>{code} {props.diagnoses.map(diagnose => diagnose.code === code
-          ? diagnose.name : null)}
-          </li>
-        )}
-  </ul>
+    <div>
+      <ul>
+      {props.diagnosisCodes.map(code =>
+            <li key={code}>{code} {props.diagnoses.map(diagnose => diagnose.code === code
+            ? diagnose.name : null)}
+            </li>
+          )}
+      </ul>
+    </div>
   )
 }
 
@@ -121,8 +128,12 @@ const EntryListing: React.FC<{entry: Entry; diagnoses: Diagnosis[]}> = ({ entry,
 
 const PatientPage = (props: PatientProps) => {
   const id = useParams().id;
-  const patient = props.patients.find(p => p.id === id);
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([])
+  const [patient, setPatient] = useState<Patient>();
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+
+  useEffect(() => {
+    setPatient(props.patients.find(p => p.id === id));
+  }, [props.patients, id]);
 
   useEffect(() => {
     const fetchDiagnoseList = async () => {
@@ -130,7 +141,11 @@ const PatientPage = (props: PatientProps) => {
       setDiagnoses(patients);
     };
     void fetchDiagnoseList();
-  }, [diagnoses])
+  }, [diagnoses]);
+
+  const handleEntryAdded = (updatedPatient: Patient) => {
+    setPatient(updatedPatient);
+  }
 
   return (
     <div>
@@ -141,9 +156,14 @@ const PatientPage = (props: PatientProps) => {
       </h2>
       <p>ssn: {patient?.ssn} </p>
       <p>occupation: {patient?.occupation}</p>
+
+      <div style={{ marginBottom: '10px' }}>
+        {patient && <NewEntryForm patient={patient} onEntryAdded={handleEntryAdded}/>}
+      </div>
+
       <h3>entries</h3>
       {patient?.entries.map(entry => <EntryListing key={entry.id} entry={entry} diagnoses={diagnoses} />)}
-      <Button variant="contained">add new entry</Button>
+
     </div>
   )
 };
